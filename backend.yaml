@@ -1,0 +1,45 @@
+# backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: 22i-2730-mern-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: noorulain26/docker-mern-nginx-bezkoder-api-1:latest
+        ports:
+        - containerPort: 6868
+        env:
+        # Assuming your backend connects to MongoDB using these env vars
+        - name: DB_HOST
+          value: mongodb-service
+        - name: DB_USER
+          value: admin
+        - name: DB_PASSWORD
+          value: password
+        - name: DB_PORT
+          value: "27017"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: 22i-2730-mern-app
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 6868
+      targetPort: 6868
+  type: ClusterIP
